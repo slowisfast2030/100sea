@@ -156,3 +156,31 @@ start-yarn.sh
 mr-jobhistory-daemon.sh start historyserver
 /export/server/spark/sbin/start-history-server.sh
 ```
+
+### Configuring Logging
+>Spark uses log4j for logging. You can configure it by adding a log4j2.properties file in the conf directory. One way to start is to copy the existing log4j2.properties.template located there.
+
+
+### Overriding configuration directory
+>To specify a different configuration directory other than the default “SPARK_HOME/conf”, you can set SPARK_CONF_DIR. Spark will use the configuration files (spark-defaults.conf, spark-env.sh, log4j2.properties, etc) from this directory.
+---
+### Inheriting Hadoop Cluster Configuration
+
+If you plan to read and write from HDFS using Spark, there are two Hadoop configuration files that should be included on Spark’s classpath:
+
+* hdfs-site.xml, which provides default behaviors for the HDFS client.
+* core-site.xml, which sets the default filesystem name.
+
+The location of these configuration files varies across Hadoop versions, but a common location is inside of /etc/hadoop/conf. Some tools create configurations on-the-fly, but offer a mechanism to download copies of them.
+
+To make these files visible to Spark, set HADOOP_CONF_DIR in $SPARK_HOME/conf/spark-env.sh to a location containing the configuration files.
+
+---
+### Custom Hadoop/Hive Configuration
+If your Spark application is interacting with Hadoop, Hive, or both, there are probably Hadoop/Hive configuration files in Spark’s classpath.
+
+Multiple running applications might require different Hadoop/Hive client side configurations. You can copy and modify hdfs-site.xml, core-site.xml, yarn-site.xml, hive-site.xml in Spark’s classpath for each application. In a Spark cluster running on YARN, these configuration files are set cluster-wide, and cannot safely be changed by the application.
+
+The better choice is to use spark hadoop properties in the form of spark.hadoop.*, and use spark hive properties in the form of spark.hive.*. For example, adding configuration “spark.hadoop.abc.def=xyz” represents adding hadoop property “abc.def=xyz”, and adding configuration “spark.hive.abc=xyz” represents adding hive property “hive.abc=xyz”. They can be considered as same as normal spark properties which can be set in $SPARK_HOME/conf/spark-defaults.conf
+
+In some cases, you may want to avoid hard-coding certain configurations in a SparkConf. For instance, Spark allows you to simply create an empty conf and set spark/spark hadoop/spark hive properties.

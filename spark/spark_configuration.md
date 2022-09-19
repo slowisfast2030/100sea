@@ -55,7 +55,7 @@ spark.serializer        org.apache.spark.serializer.KryoSerializer
 
 
 | Environment Variable	 | Meaning |
-| :-----| ----: | 
+| :-----| :---- | 
 | JAVA_HOME | Location where Java is installed (if it's not on your default PATH).
  | 
 | PYSPARK_PYTHON | Python binary executable to use for PySpark in both driver and workers (default is python3 if available, otherwise python). Property spark.pyspark.python take precedence if it is set
